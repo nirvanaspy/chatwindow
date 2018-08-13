@@ -1,0 +1,1476 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>聊天对话框</title>
+    <link rel="stylesheet" type="text/css" href="./font/iconfont.css">
+    <style type="text/css">
+        *{font-size: 14px; padding:0; margin:0;}
+        html,body{
+            height: 100%;
+        }
+        /*主体结构样式*/
+        .main{
+            position: relative;
+            margin: 0 auto;
+            border: 1px solid steelblue;
+            width: 500px;
+            height: 480px;
+            overflow-x: hidden;
+        }
+        .chat_titile{
+            height: 30px;
+            text-align: center;
+            border-bottom: 1px solid #D1D3D6;
+        }
+        .msgInput{
+            display: block;
+            width: 100%;
+            height: 60px;
+            margin: 10px auto;
+        }
+
+        /*按钮样式开始*/
+        .sendbtn{
+            position: absolute;
+            height: 29px;
+            bottom: 5px;
+            right: 10px;
+        }
+		.msgbtn{
+			position: absolute;
+            height: 29px;
+            bottom: 5px;
+            right: 70px;
+		}
+		.soundbtn{
+			position: absolute;
+            height: 29px;
+            bottom: 5px;
+            right: 105px;
+		}
+        .othersbtn{
+            position: absolute;
+            height: 29px;
+            bottom: 5px;
+            left: 10px;
+        }
+		
+        .timeBtn{
+            position: absolute;
+            height: 29px;
+            bottom: 5px;
+            left: 60px;
+        }
+        #test {
+            position: absolute;
+            height: 29px;
+            bottom: 5px;
+            left: 90px;
+        }
+        #setNotice0,#setNotice1,#setNotice2 {
+            left:120px;
+            height:16px;
+            line-height: 12px;
+            bottom:30px;
+        }
+        #setNotice0{
+            bottom:40px;
+        }
+        #setNotice1{
+            bottom:20px;
+        }
+        #setNotice2{
+            bottom:0;
+        }
+        #sendFile{
+            left:170px;
+        }
+        #sendFile1{
+            left: 200px;
+        }
+        #setHistory{
+            left:240px
+        }
+        #clearHistory{
+            left:270px;
+        }
+        #mesState{
+            left:300px;
+        }
+        /*按钮样式结束*/
+
+        /*时间提示样式*/
+        .timeBox{
+            width:160px;
+            margin:10px auto 0 auto;
+            padding-left: 28px;
+            font-size: 12px;
+            color:#939297;
+        }
+
+        /*消息盒子样式*/
+        .content{
+            list-style: none;
+            width: auto;
+            height: 320px;
+            margin: 0px auto;
+			overflow-x: hidden;
+            overflow-y: auto;
+            padding:0 18px 0 0;
+        }
+        .content .left{
+            float: left;
+            text-align: left;
+            background-color: lightgrey;
+        }
+        .msgContent{
+            width:auto;
+            max-width: 60%;
+            height: auto;
+            word-break: break-all;
+            margin: 5px;
+            padding: 3px;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .msgContent span.textMesContainer {
+            display:block;
+        }
+        .content .right{
+            float: right;
+            background-color: #A6D4F2;
+            margin-right:10px;
+        }
+        .dialogContainer:after {
+            content:"";
+            display:block;
+            clear:both;
+        }
+        .dialogContainer{
+            padding: 8px 8px;
+            margin-right: -18px;
+        }
+        /*消息读取状态样式*/
+        .stateSpan{
+            display: inline-block;
+            height: 20px;
+			float: right;
+            font-size: 12px;
+			padding-top:15px;
+            color: #cccccc;			
+        }
+		
+		span.stateSpan.left{
+			float: left;
+			background:none;
+		}
+
+        .stateSpan.notRead {
+            color:red;
+        }
+        /*头像样式*/
+        img.avatarPic{
+            float: right;
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            margin-right:4px;
+            cursor: pointer;
+        }
+        img.avatarPic.left{
+            float: left;
+			cursor: default;
+        }
+        img.othersAvatar{
+            float: left;
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            margin-left: 4px;
+        }
+
+        /*消息图片样式*/
+        .imgMesContainer{
+            max-width: 200px;
+            max-height: 200px;
+            display:inline-block;
+        }
+
+        /*全屏样式*/
+        #main.fullScreen {
+            box-sizing: border-box;
+            width:100%;
+            height: 100%;
+            scroll-x:none;
+        }
+        #main.fullScreen .content .right{
+            float:left;
+            margin-right:2px;
+        }
+        #main.fullScreen img.avatarPic{
+            float:left;
+            margin-left:4px;
+            margin-right: 0;
+        }
+        #main.fullScreen .content{
+            height: 75%;
+        }
+
+        /*查看图片详情样式*/
+        #viewImg{
+            box-sizing: border-box;
+            background: rgba(0,0,0,0.8);
+            width:100%;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left: 0;
+            z-index: 1000;
+            text-align: center;
+            padding-top: 40px;
+        }
+        #viewImg .imgMesContainer{
+            width: auto;
+            height: auto;
+            max-width: 1000px;
+            max-height: 800px;
+        }
+        #closeMask {
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            border: 1px solid #fff;
+            color:#fff;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        #closeMask:hover{
+            background: #CE5146;
+            border-color: #CE5146;
+        }
+        /*提示信息样式*/
+        div.noticeContainer{
+            text-align: center;
+            margin-top: 10px;
+        }
+        div.noticeBox{
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 6px;
+            background: #D3D8DE;
+        }
+        div.noticeBox span {
+            color:#777777;
+        }
+        /*发送文件夹样式*/
+        .fileContainer{
+            background: #fff;
+            margin: 2px;
+            width: auto;
+            height: 100px;
+        }
+        .fileInfo{
+            width:auto;
+            width:100%;
+            height:70px;
+            overflow: hidden;
+        }
+        .iconfont.icon-icon_folder{
+            font-size: 40px;
+            float: left;
+            color: blue;
+            margin-top: 6px;
+            margin-left: 8px;
+        }
+        .fileDetail {
+            float: left;
+            margin-left: 6px;
+            margin-top: 6px;
+            /*width: auto;*/
+            min-width:200px;
+            max-width:70%;
+            height:60px;
+
+        }
+        .fileNameBox,.fileNoticeBox{
+            width:100%;
+            height: 20px;
+            line-height: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .fileNameBox {
+            display: inline-block;
+            padding-left: 4px;
+            font-size: 14px;
+        }
+      /*  .fileNoticeBox{
+            width:auto;
+            width: 60%;
+            overflow: hidden;
+        }*/
+        .fileManipulate{
+            float: left;
+            width: 100%;
+            border-top:1px solid #ccc;
+        }
+        span.openFileBtn {
+            float: right;
+            height:30px;
+            line-height: 30px;
+            margin-right: 10px;
+            color:#009BDB;
+            cursor: pointer;
+        }
+		
+		span.openFolderBtn {
+            float: right;
+            height:30px;
+            line-height: 30px;
+            margin-right: 10px;
+            color:#009BDB;
+            cursor: pointer;
+        }
+
+        /*字体图标样式*/
+        .iconfont{
+            font-size: 16px;
+            margin-right: 4px;
+        }
+        .icon-cuowu{
+            color:#E35850;
+        }
+        .icon-duihao2{
+            color:#5FB41B;
+        }
+        .icon-tishi{
+            color:#4EA9E9;
+        }
+		.icon-sound_right{
+			color:#85888A;
+			cursor:pointer;
+		}
+		.icon-sound_left{
+			color:#85888A;
+			cursor:pointer;
+		}
+    </style>
+    <script type="text/javascript">
+        window.onload = function(){
+			function setAbsoulteFontIconHerf(herfValue)
+			{
+				var t_value = herfValue + '/font/iconfont.css';
+				var fontLink = document.getElementsByTagName('link')[0];
+				fontLink.setAttribute('href',t_value);
+			}
+			
+			
+			var content = document.getElementById('content')
+			
+			//https://blog.csdn.net/wangpf1992/article/details/53080075 旧版本
+			//文档高度
+			function getDocumentTop() {
+				var scrollTop = 0, bodyScrollTop = 0, documentScrollTop = 0;
+				if (document.body)
+				{
+					bodyScrollTop = document.body.scrollTop;
+				}
+				if (content)
+				{
+					documentScrollTop = content.scrollTop;
+				}
+				scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
+				return scrollTop;
+			}
+			//可视窗口高度
+			function getWindowHeight() {
+				var windowHeight = 0;
+				if (document.compatMode == "CSS1Compat")
+				{
+					windowHeight = content.clientHeight;
+				}
+				else
+				{
+					windowHeight = document.body.clientHeight;
+				}
+				return windowHeight;
+			}
+
+			//滚动条滚动高度
+			function getScrollHeight() {
+				var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
+				if (document.body)
+				{
+					bodyScrollHeight = document.body.scrollHeight;
+				}
+				if (content)
+				{
+					documentScrollHeight = content.scrollHeight;
+				}
+				scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight;
+				return scrollHeight;
+			}
+			
+			//https://www.jb51.net/article/57614.htm 最新
+			//取窗口滚动条高度
+			function getScrollTop(){
+				var scrollTop=0;
+				if(content)
+				{
+					scrollTop=content.scrollTop;
+					console.log('content====='+scrollTop);
+				}
+				else if(document.body)
+				{
+					scrollTop=document.body.scrollTop;
+					console.log('body====='+scrollTop);
+				}
+				return scrollTop;
+			}
+			
+			//取窗口可视范围的高度 
+			function getClientHeight(){
+				var clientHeight=0;
+				if(content)
+				{
+					clientHeight = content.clientHeight;        
+				}
+				else if(document.body)
+				{
+					clientHeight = document.body.clientHeight;    
+				}
+				return clientHeight;
+			}
+		
+			//取文档内容实际高度 
+			function getScrollHeight(){
+				var scrollHeight=0;
+				if(content)
+				{
+					scrollHeight = content.scrollHeight;
+				}
+				else if(document.body)
+				{
+					scrollHeight = document.body.scrollHeight;
+				}
+				return scrollHeight;
+			}
+
+			var scrollFunc = function (e) {
+			
+				e = e || document.event;
+				console.log('------------')
+				<!-- console.log('文档1***'+getDocumentTop()); -->
+				<!-- console.log('可视窗口1***'+getWindowHeight()); -->
+				<!-- console.log('滚动条1***'+getScrollHeight()); -->
+				console.log('可视范围2***'+getScrollTop());
+				console.log('窗口2***'+getClientHeight());
+				console.log('文档2***'+getScrollHeight());
+
+				if (getScrollTop() == 0 && e.wheelDelta >= 120)
+				{
+					//当滚动条在顶部后鼠标滚轮滚动
+					console.log('添加更多内容')
+					//bridge.getMoreRecord();
+				}
+			}
+			
+			content.onmousewheel = scrollFunc;
+			
+            var input = document.getElementById('msg_input');//查找缓存
+            /*var imgMesContainer = document.getElementsByClassName('imgMesContainer')*/
+            // 模拟自己发消息
+            document.getElementById('sendbtn').addEventListener('click',function (ev) {
+                //var input1 = document.getElementById('msg_input');//
+                //input0
+                sendMsg();
+				appendVoiceMsg(0,60,'./2c16f9cfbf44439ab3186883aaa38856.raw','./1.jpg');
+            })
+            // 模拟别人发消息
+            document.getElementById('othersMessage').addEventListener('click',function (ev) {
+                othersMessage();
+				appendMesRecord(0,'/*!\n * @brief','E:/Git/build-RimClient-Qt570vs86-Debug/image/systemIcon/1.png')
+            })
+            // 模拟显示消息时间
+            document.getElementById('showMessageTime').addEventListener('click',function (ev) {
+                appendMessageTime();
+            })
+            // 模拟双击切换窗口大小
+            document.getElementById('chat_titile').addEventListener('dblclick',function (ev) {
+                toggleWindow();
+            })
+            // 模拟发送图片加文字消息
+            document.getElementById('test').addEventListener('click',function (ev) {
+                var input = '<img src="users\\2634\\ChatRecvFile\\Image\\C2C\\02fdc2b0df19b9f882ad0fba4636a918.png">'
+                var messageTarget = 0;
+                var avatarPath = './1.jpg'
+                //appendMesRecord(messageTarget,input,avatarPath,0);
+				var messageInfo ='{\"target\":1,\"name\":"liang",\"content\":\"hello World!\"}';  
+				test(messageInfo);
+
+            })
+			document.getElementById('sound').addEventListener('click',function (ev) {
+				sendSound();
+				appendVoiceMsg(0,60,'./2c16f9cfbf44439ab3186883aaa38856.raw','./1.jpg');
+				setAbsoulteFontIconHerf('C:/Users/LYS/Desktop/chatWindow');				
+
+            })
+            // 模拟发送文件夹消息
+            document.getElementById('sendFile').addEventListener('click',function (ev) {
+                /*var target = 1;
+                var filePath = 'C:/Users/LYS/Desktop/chatWindow/2.JPG'
+                var avatarPath = './1.jpg'
+                appendFile(target,filePath,avatarPath,1)*/
+				var messageTarget = 0;
+                var avatarPath = './1.jpg'
+				var testInfo = 'E:\\RIMFolder\\build-RimClient-MSVC_5_7_1-Debug\\users\\2634\\ChatRecvFile\\Image\\C2C\\123.png';
+				prependImgRecord(1,testInfo,avatarPath);
+            })
+            document.getElementById('sendFile1').addEventListener('click',function (ev) {
+                var target = 0;
+                var filePath = 'C:\\Users\\spy\\Desktop\\BOSH可视化部署'
+                var avatarPath = './1.jpg'
+                appendFile(target,filePath,avatarPath,0)
+				prependFile(1,filePath,avatarPath,1);
+
+            })
+            // 点击图片全屏显示，关闭后删除mask层
+            document.getElementById('main').addEventListener('dblclick',function (ev) {
+                var img = ev.target.className;
+                if(img === 'imgMesContainer') {
+                    var imgSrc = ev.target.src;
+                    var mask = document.createElement('div');
+                    var closeMask = document.createElement('span');
+                    closeMask.innerHTML = '×';
+                    closeMask.setAttribute('id','closeMask');
+                    mask.setAttribute('id','viewImg');
+                    var viewImg = document.createElement('img');
+                    viewImg.setAttribute('src',imgSrc);
+                    viewImg.className = 'imgMesContainer';
+                    mask.appendChild(viewImg);
+                    mask.appendChild(closeMask);
+                    document.body.appendChild(mask);
+                    closeMask.addEventListener('click',function () {
+                        document.body.removeChild(mask);
+                    })
+                }
+            })
+            // 模拟发送提示消息
+            document.getElementById('setNotice0').addEventListener('click',function (ev) {
+                appendNotice(0,'你取消了发送，文件传输失败！')
+            })
+            document.getElementById('setNotice1').addEventListener('click',function (ev) {
+                appendNotice(1,'消息发送成功！')
+            })
+            document.getElementById('setNotice2').addEventListener('click',function (ev) {
+                appendNotice(2,'重要提示！')
+            })
+            // 模拟发送消息状态
+            document.getElementById('mesState').addEventListener('click',function (ev) {
+                setMesReadState(0)
+            })
+            // 模拟设置对话框背景色
+            document.getElementById('setColor').addEventListener('click',function (ev) {
+                var target = document.getElementById('dialogTarget').value;
+                var color = document.getElementById('dialogBgc').value;
+                setDialogBgc(target,color);
+            })
+            //快捷键 发送
+            document.onkeypress = function (event) {
+                var e = event || window.event;
+                var keycode = e.keyCode || e.which;
+                console.log(e)
+                if( keycode==10){//判断同时按下ctrl 和enter
+                    sendMsg()
+                }
+            }
+            // 获取当前时间
+            function getNowFormatDate() {
+                var date = new Date();
+                var seperator1 = "/";
+                var seperator2 = ":";
+                var month = date.getMonth() + 1;
+                var strDate = date.getDate();
+                var strMinute = date.getMinutes()
+                var strSecond = date.getSeconds()
+                var strHour = date.getHours()
+                if (month >= 1 && month <= 9) {
+                    month = "0" + month;
+                }
+                if (strDate >= 0 && strDate <= 9) {
+                    strDate = "0" + strDate;
+                }
+                if (strHour >= 0 && strHour < 9) {
+                    strHour = "0" + strHour
+                }
+                if (strMinute >= 0 && strMinute < 9) {
+                    strMinute = "0" + strMinute
+                }
+                if (strSecond >= 0 && strSecond < 9) {
+                    strSecond = "0" + strSecond
+                }
+                var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                    + " " + strHour + seperator2 + strMinute
+                    + seperator2 + strSecond;
+                return currentdate;
+            }
+            // 添加class
+            function addClass(element, new_name) {
+                if (!element || !new_name) return false;
+                if (element.className) {
+                    var old_class_name = element.className;
+                    element.className = old_class_name + " " + new_name;
+                } else{
+                    element.className = new_name;
+                }
+                return true;
+            }
+            // 移除class
+            function removeClass(element, class_name) {
+                if(!element || !class_name) return false;
+                if (!element.className) return false;
+                var all_names = element.className.split(" ");
+                for (var i = 0; i < all_names.length; i++) {
+                    if (all_names[i] === class_name) {
+                        all_names.splice(i, 1);
+                        element.className = "";
+                        for (var j = 0; j < all_names.length; j++) {
+                            element.className += " ";
+                            element.className += all_names[j];
+                        }
+                        return true;
+                    }
+                }
+            }
+            // 判断是否有class
+            function hasClass(obj,cls){
+                var obj_class = obj.className,//获取class的内容；
+                    obj_class_lst = obj_class.split(/\s+/);//通过split空字符将cls转换成数组
+                x = 0;
+                for(x in obj_class_lst){
+                    if ( obj_class_lst[x] == cls ) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            // 自己发送一个消息
+            function sendMsg() {
+                var input = document.getElementById('msg_input');//查找缓存
+                if(input.value === ''){
+                    return;
+                }
+                var content_container = document.getElementById('content');
+                var newDiv = document.createElement('div');
+                // 头像
+                var newDialog = document.createElement('div')
+                /*myAvatar.className = 'myAvatar';*/
+                var url = './1.jpg';
+                var picContainer = document.createElement('img');
+                var stateSpan = document.createElement('span');
+                stateSpan.setAttribute('class','stateSpan');
+                picContainer.setAttribute('src',url);
+                picContainer.setAttribute('class','avatarPic');
+                newDialog.innerHTML = input.value;
+                newDiv.appendChild(picContainer);
+                newDiv.appendChild(newDialog);
+                newDiv.appendChild(stateSpan);
+                newDiv.setAttribute('class','dialogContainer');
+                newDialog.className = 'msgContent right';
+                content_container.appendChild(newDiv);
+                var div = document.createElement('div');
+                div.style = 'clear:both';
+                content_container.appendChild(div);
+
+                input.value = '';
+                newDiv.scrollIntoView();//将元素滚动到可见位置
+            }
+            // 别人发送一个消息
+            function othersMessage() {
+                var input = document.getElementById('msg_input');//查找缓存
+                if(input.value === ''){
+                    return;
+                }
+                var content_container = document.getElementById('content');
+                var newDiv = document.createElement('div');
+                // 头像
+                var newDialog = document.createElement('div');
+                var stateSpan = document.createElement('span');
+                stateSpan.setAttribute('class','stateSpan');
+                var url = './2.jpg';
+                var picContainer = document.createElement('img');
+                picContainer.setAttribute('src',url);
+                picContainer.setAttribute('class','avatarPic othersAvatar');
+                newDialog.innerHTML = input.value;
+                newDiv.appendChild(picContainer);
+                newDiv.appendChild(newDialog);
+                newDiv.appendChild(stateSpan);
+                newDiv.setAttribute('class','dialogContainer');
+                newDialog.className = 'msgContent left';
+                content_container.appendChild(newDiv);
+                var div = document.createElement('div');
+                div.style = 'clear:both';
+                content_container.appendChild(div);
+
+                input.value = '';
+                newDiv.scrollIntoView();//将元素滚动到可见位置
+            }
+            // 显示消息时间
+            function appendMessageTime () {
+                var content = document.getElementById('content');
+                var theTime = getNowFormatDate();
+                var timeContainer = document.createElement('div');
+                var time = document.createElement('span');
+                time.innerHTML = theTime;
+                timeContainer.appendChild(time);
+                timeContainer.setAttribute('class','timeBox');
+                content.appendChild(timeContainer);
+                timeContainer.scrollIntoView();
+            }
+			
+			// 前置显示消息时间
+            function prependMessageTime () {
+                var content = document.getElementById('content');
+                var theTime = getNowFormatDate();
+                var timeContainer = document.createElement('div');
+                var time = document.createElement('span');
+                time.innerHTML = theTime;
+                timeContainer.appendChild(time);
+                timeContainer.setAttribute('class','timeBox');
+                content.insertBefore(timeContainer,content.childNodes[0]);
+                timeContainer.scrollIntoView();
+            }
+            //切换窗口大小
+            function toggleWindow() {
+                var mainContainer = document.getElementById('main');
+                var flag = hasClass(mainContainer,'fullScreen');
+                if(!flag) {
+                    addClass(mainContainer,'fullScreen');
+                } else {
+                    removeClass(mainContainer,'fullScreen');
+                }
+            }
+            // 接收消息，暴露参数
+            function appendMesRecord(messageTarget,textMessage,avatarPath,readState,stateID) {
+                if(textMessage === ''){
+                    alert ("发送消息不能为空");
+                } else {
+                    //初始化容器
+                    var content_container = document.getElementById('content');
+                    var newDiv = document.createElement('div');
+                    newDiv.className = 'dialogContainer';
+                    var newDialog = document.createElement('div');
+                    //头像信息
+                    var avatarContainer = document.createElement('img');
+                    avatarContainer.setAttribute('src',avatarPath);
+                    avatarContainer.setAttribute('class','avatarPic');
+                    // 文字信息
+                    var textMes = document.createElement('div');
+                    textMes.className = 'textMesContainer';
+                    textMes.innerHTML = textMessage;
+                    // 读取状态容器
+                    var stateSpan = document.createElement('span');
+                    stateSpan.setAttribute('class','stateSpan');
+                    //添加内容
+                    newDiv.appendChild(avatarContainer);
+                    newDialog.appendChild(textMes);
+                    newDiv.appendChild(newDialog);
+                    newDiv.appendChild(stateSpan);
+                    content_container.appendChild(newDiv);
+                    var div = document.createElement('div');
+                    div.style = 'clear:both';
+                    content_container.appendChild(div);
+                    if(messageTarget === 0) {
+                        newDialog.className = 'msgContent right dialog_me';
+                    } else {
+                        newDialog.className = 'msgContent left dialog_others';
+                        avatarContainer.className = 'avatarPic left';
+                    }
+                    // 设置消息内图片样式
+                    var imgSeter = document.getElementById('content').getElementsByClassName('msgContent')
+                    for (var i=0;i<imgSeter.length;i++) {
+                        var imgBox = imgSeter[i].getElementsByTagName('img');
+                        for (var j=0;j<imgBox.length;j++) {
+                            imgBox[j].classList.add('imgMesContainer'); // 添加非重置
+                        }
+                    };
+
+                    newDiv.scrollIntoView();
+                }
+            }
+			
+			//向最前一条消息记录插入新的消息记录
+			function prependMesRecord(messageTarget,textMessage,avatarPath) {
+				if(textMessage === ''){
+                    
+                } else {
+                    //初始化容器
+                    var content_container = document.getElementById('content');
+                    var newDiv = document.createElement('div');
+                    newDiv.className = 'dialogContainer';
+                    var newDialog = document.createElement('div');
+                    //头像信息
+                    var avatarContainer = document.createElement('img');
+                    avatarContainer.setAttribute('src',avatarPath);
+                    avatarContainer.setAttribute('class','avatarPic');
+                    // 文字信息
+                    var textMes = document.createElement('div');
+                    textMes.className = 'textMesContainer';
+                    textMes.innerHTML = textMessage;
+                    // 读取状态容器
+                    var stateSpan = document.createElement('span');
+                    stateSpan.setAttribute('class','stateSpan');
+                    //添加内容
+                    newDiv.appendChild(avatarContainer);
+                    newDialog.appendChild(textMes);
+                    newDiv.appendChild(newDialog);
+                    newDiv.appendChild(stateSpan);
+					var div = document.createElement('div');
+                    div.style = 'clear:both';
+                    content_container.insertBefore(div,content_container.childNodes[0]);
+                    content_container.insertBefore(newDiv,content_container.childNodes[0]);                    
+                    if(messageTarget === 0) {
+                        newDialog.className = 'msgContent right dialog_me';
+                    } else {
+                        newDialog.className = 'msgContent left dialog_others';
+                        avatarContainer.className = 'avatarPic left';
+                    }
+                    // 设置消息内图片样式
+                    var imgSeter = document.getElementById('content').getElementsByClassName('msgContent')
+                    for (var i=0;i<imgSeter.length;i++) {
+                        var imgBox = imgSeter[i].getElementsByTagName('img');
+                        for (var j=0;j<imgBox.length;j++) {
+                            imgBox[j].classList.add('imgMesContainer'); // 添加非重置
+                        }
+                    };
+
+                    newDiv.scrollIntoView();
+                }
+				
+			}
+			
+			function appendImgRecord(messageTarget,imgPath,avatarPath) {
+				if(imgPath === '')
+				{
+
+				}
+				else
+				{
+					//初始化容器
+					var content_container = document.getElementById('content');
+					var newDiv = document.createElement('div');
+					newDiv.className = 'dialogContainer';
+					var newDialog = document.createElement('div');
+					//头像信息
+					var avatarContainer = document.createElement('img');
+					avatarContainer.setAttribute('src',avatarPath);
+					avatarContainer.setAttribute('class','avatarPic');
+					// 图片信息
+					var imgMesContainer = document.createElement('div');
+					var imgMsg = document.createElement('img');
+					imgMsg.setAttribute('src',imgPath);
+					imgMesContainer.appendChild(imgMsg);
+
+					//添加内容
+					newDiv.appendChild(avatarContainer);
+					newDialog.appendChild(imgMesContainer);
+					newDiv.appendChild(newDialog);
+
+					content_container.appendChild(newDiv);
+					var div = document.createElement('div');
+					div.style = 'clear:both';
+					content_container.appendChild(div);
+					if(messageTarget === 0)
+					{
+						newDialog.className = 'msgContent right dialog_me';
+					}
+					else
+					{
+						newDialog.className = 'msgContent left dialog_others';
+						avatarContainer.className = 'avatarPic left';
+					}
+					// 设置消息内图片样式
+					var imgSeter = document.getElementById('content').getElementsByClassName('msgContent');
+					for (var i=0;i<imgSeter.length;i++)
+					{
+						var imgBox = imgSeter[i].getElementsByTagName('img');
+						for (var j=0;j<imgBox.length;j++)
+						{
+							imgBox[j].classList.add('imgMesContainer'); // 添加非重置
+						}
+					}
+
+					newDiv.scrollIntoView(false);
+				}
+			}
+			
+			function prependImgRecord(messageTarget,imgPath,avatarPath) {
+				if(imgPath === '')
+				{
+
+				}
+				else
+				{
+					//初始化容器
+					var content_container = document.getElementById('content');
+					var newDiv = document.createElement('div');
+					newDiv.className = 'dialogContainer';
+					var newDialog = document.createElement('div');
+					//头像信息
+					var avatarContainer = document.createElement('img');
+					avatarContainer.setAttribute('src',avatarPath);
+					avatarContainer.setAttribute('class','avatarPic');
+					// 图片信息
+					var imgMesContainer = document.createElement('div');
+					var imgMsg = document.createElement('img');
+					imgMsg.setAttribute('src',imgPath);
+					imgMesContainer.appendChild(imgMsg);
+
+					//添加内容
+					newDiv.appendChild(avatarContainer);
+					newDialog.appendChild(imgMesContainer);
+					newDiv.appendChild(newDialog);
+
+					var div = document.createElement('div');
+					div.style = 'clear:both';
+					content_container.insertBefore(div,content_container.childNodes[0]);
+					content_container.insertBefore(newDiv,content_container.childNodes[0]);
+					if(messageTarget === 0)
+					{
+						newDialog.className = 'msgContent right dialog_me';
+					}
+					else
+					{
+						newDialog.className = 'msgContent left dialog_others';
+						avatarContainer.className = 'avatarPic left';
+					}
+					// 设置消息内图片样式
+					var imgSeter = document.getElementById('content').getElementsByClassName('msgContent');
+					for (var i=0;i<imgSeter.length;i++)
+					{
+						var imgBox = imgSeter[i].getElementsByTagName('img');
+						for (var j=0;j<imgBox.length;j++)
+						{
+							imgBox[j].classList.add('imgMesContainer'); // 添加非重置
+						}
+					}
+
+					newDiv.scrollIntoView();
+				}
+			}
+            // 设置提醒消息
+            function appendNotice(noticeType,noticeContent) {
+                var noticeContainer = document.createElement('div');
+                noticeContainer.setAttribute('class','noticeContainer');
+                var noticeBox = document.createElement('div');
+                noticeBox.setAttribute('class','noticeBox');
+                var noticeIcon = document.createElement('i');
+                var noticeText = document.createElement('span');
+                var contentContainer = document.getElementById('content');
+                noticeText.innerHTML = noticeContent;
+                if( noticeType === 0){
+                    noticeIcon.className = 'iconfont icon-cuowu';
+                }else if (noticeType === 1){
+                    noticeIcon.className = 'iconfont icon-duihao2';
+                }else if (noticeType === 2){
+                    noticeIcon.className = 'iconfont icon-tishi';
+                }
+                noticeBox.appendChild(noticeIcon);
+                noticeBox.appendChild(noticeText);
+                noticeContainer.appendChild(noticeBox);
+                contentContainer.appendChild(noticeContainer);
+                noticeContainer.scrollIntoView();
+            }
+			
+			// 设置提醒消息
+            function prependNotice(noticeType,noticeContent) {
+                var noticeContainer = document.createElement('div');
+                noticeContainer.setAttribute('class','noticeContainer');
+                var noticeBox = document.createElement('div');
+                noticeBox.setAttribute('class','noticeBox');
+                var noticeIcon = document.createElement('i');
+                var noticeText = document.createElement('span');
+                var contentContainer = document.getElementById('content');
+                noticeText.innerHTML = noticeContent;
+                if( noticeType === 0){
+                    noticeIcon.className = 'iconfont icon-cuowu';
+                }else if (noticeType === 1){
+                    noticeIcon.className = 'iconfont icon-duihao2';
+                }else if (noticeType === 2){
+                    noticeIcon.className = 'iconfont icon-tishi';
+                }
+                noticeBox.appendChild(noticeIcon);
+                noticeBox.appendChild(noticeText);
+                noticeContainer.appendChild(noticeBox);
+                contentContainer.insertBefore(noticeContainer,contentContainer.childNodes[0]);
+                noticeContainer.scrollIntoView();
+            }
+            // 收/发文件夹消息
+            function appendFile(target,filePath,avatarPath,resultType) {
+                // 初始化容器
+                var content_container = document.getElementById('content');
+                var newDiv = document.createElement('div');
+                newDiv.className = 'dialogContainer';
+                var newDialog = document.createElement('div');
+                //头像信息
+                var avatarContainer = document.createElement('img');
+                avatarContainer.setAttribute('src',avatarPath);
+                avatarContainer.setAttribute('class','avatarPic');
+                // 根据路径获得文件名称
+                var fileArr = filePath.split('\\');
+                /*console.log(fileArr)*/
+                var fileName = fileArr[fileArr.length - 1];
+                /*console.log(fileName)*/
+                var content_container = document.getElementById('content');
+                // 文件夹内元素
+                var fileContainer = document.createElement('div');
+                fileContainer.setAttribute('class','fileContainer');
+                var fileInfo = document.createElement('div');
+                fileInfo.setAttribute('class','fileInfo');
+                var fileManipulate = document.createElement('div');
+                fileManipulate.setAttribute('class','fileManipulate');
+                var fileIcon = document.createElement('i');
+                fileIcon.setAttribute('class','iconfont icon-icon_folder');
+                var fileDetail = document.createElement('div');
+                fileDetail.setAttribute('class','fileDetail');
+                var fileNameBox = document.createElement('span');
+                fileNameBox.setAttribute('class','fileNameBox');
+                var noticeBox = document.createElement('div');
+                noticeBox.setAttribute('class','fileNoticeBox');
+                if (target === 0)
+				{
+					noticeBox.innerHTML = '<i class="iconfont icon-duihao2"></i><span>成功发送文件</span>';
+				}
+				if (target === 1)
+				{
+					noticeBox.innerHTML = '<i class="iconfont icon-duihao2"></i><span>成功存至'+filePath+'</span>';
+				}
+                // 文件详情
+                fileNameBox.innerHTML = fileName;
+                fileDetail.appendChild(fileNameBox);
+                fileDetail.appendChild(noticeBox);
+                // 文件信息
+                fileInfo.appendChild(fileIcon);
+                fileInfo.appendChild(fileDetail);
+                fileContainer.appendChild(fileInfo);
+                // 操作
+                var openFile = openFileBtn()
+                openFile.addEventListener('click',function () {
+                    window.open(filePath);
+                })
+				
+				//打开文件夹
+				var openFolder = openFolderBtn();
+				               
+				fileManipulate.appendChild(openFolder);
+				fileManipulate.appendChild(openFile);
+				
+                fileContainer.appendChild(fileManipulate);
+                // 会话容器绑定
+                newDialog.appendChild(fileContainer);
+                newDiv.appendChild(avatarContainer);
+                newDiv.appendChild(newDialog);
+                content_container.appendChild(newDiv);
+                if(target === 0) {
+                    newDialog.className = 'msgContent right dialog_me';
+                } else {
+                    newDialog.className = 'msgContent left dialog_others';
+                    avatarContainer.className = 'avatarPic left'
+                }
+                newDiv.scrollIntoView();
+            }
+			
+			function prependFile(target,filePath,avatarPath,resultType) {
+				// 初始化容器
+				var content_container = document.getElementById('content');
+				var newDiv = document.createElement('div');
+				newDiv.className = 'dialogContainer';
+				var newDialog = document.createElement('div');
+				//头像信息
+				var avatarContainer = document.createElement('img');
+				avatarContainer.setAttribute('src',avatarPath);
+				avatarContainer.setAttribute('class','avatarPic');
+				// 根据路径获得文件名称
+                var fileArr = filePath.split('\\');
+                /*console.log(fileArr)*/
+                var fileName = fileArr[fileArr.length - 1];
+                /*console.log(fileName)*/
+
+				var content_container = document.getElementById('content');
+				// 文件夹内元素
+				var fileContainer = document.createElement('div');
+				fileContainer.setAttribute('class','fileContainer');
+				var fileInfo = document.createElement('div');
+				fileInfo.setAttribute('class','fileInfo');
+				var fileManipulate = document.createElement('div');
+				fileManipulate.setAttribute('class','fileManipulate');
+				var fileIcon = document.createElement('i');
+				fileIcon.setAttribute('class','iconfont icon-icon_folder');
+				var fileDetail = document.createElement('div');
+				fileDetail.setAttribute('class','fileDetail');
+				var fileNameBox = document.createElement('span');
+				fileNameBox.setAttribute('class','fileNameBox');
+				var noticeBox = document.createElement('div');
+				noticeBox.setAttribute('class','fileNoticeBox');
+				if (target === 0)
+				{
+					noticeBox.innerHTML = '<i class="iconfont icon-duihao2"></i><span>成功发送文件</span>';
+				}
+				if (target === 1)
+				{
+					noticeBox.innerHTML = '<i class="iconfont icon-duihao2"></i><span>成功存至'+filePath+'</span>';
+				}
+				// 文件详情
+				// 根据路径获得文件名称
+				fileNameBox.innerHTML = fileName;
+
+				fileDetail.appendChild(fileNameBox);
+				fileDetail.appendChild(noticeBox);
+				// 文件信息
+				fileInfo.appendChild(fileIcon);
+				fileInfo.appendChild(fileDetail);
+				fileContainer.appendChild(fileInfo);
+				// 操作
+
+				var openFolder = openFolderBtn();
+				openFolder.setAttribute('dirPath',filePath);
+				fileManipulate.appendChild(openFolder);
+
+				var openFile = openFileBtn();
+				openFile.setAttribute('fullPath',filePath);
+				fileManipulate.appendChild(openFile);
+
+				fileContainer.appendChild(fileManipulate);
+				// 会话容器绑定
+				newDialog.appendChild(fileContainer);
+				newDiv.appendChild(avatarContainer);
+				newDiv.appendChild(newDialog);
+				content_container.insertBefore(newDiv,content_container.childNodes[0]);
+				if(target === 0)
+				{
+					newDialog.className = 'msgContent right dialog_me';
+				}
+				else
+				{
+					newDialog.className = 'msgContent left dialog_others';
+					avatarContainer.className = 'avatarPic left'
+				}
+				newDiv.scrollIntoView(false);
+			}
+            // 文件夹消息操作按钮生产
+            function openFileBtn(){
+                var openFile = document.createElement('span');
+                openFile.innerHTML = '打开';
+                openFile.setAttribute('class','openFileBtn');
+                return openFile
+            }
+			// 文件消息打开所在文件夹操作按钮生产
+			function openFolderBtn(){
+				var openFolder = document.createElement('span');
+				openFolder.innerHTML = '打开文件夹';
+				openFolder.setAttribute('class','openFolderBtn');
+				return openFolder
+			}
+            // 存入历史消息
+            function setHistory() {
+                localStorage.clear()
+                var historyMes = {};
+                var date = new Date();
+                var mes = document.getElementById('content').innerHTML;
+                /*console.log(mes,1)*/
+                historyMes.timTag = date.getDate();
+                historyMes.mes = mes;
+                var strHisMes = JSON.stringify(historyMes);
+                localStorage.setItem('hisData',strHisMes);
+
+            }
+            // 载入历史消息
+            function getHistory() {
+                var data = localStorage.getItem('hisData');
+                var dataH = JSON.parse(data).mes;
+                /*console.log(data)*/
+                var content = document.getElementById('content');
+                content.innerHTML = dataH;
+            }
+            // 清空历史消息
+            function clearHistory() {
+                localStorage.clear();
+            }
+            // 点击头像展示消息
+            document.getElementById('main').addEventListener('click',function (ev) {
+                var target = ev.target;
+                var resTarget = hasClass(target,'avatarPic');
+                if(resTarget) {
+                    alert('展示联系人信息');
+                }
+            })
+            // 显示消息读取状态
+            function setMesReadState(stateID) {
+				var stateSpan = document.getElementById(stateID);
+				if (stateSpan != null)
+				{
+					stateSpan.innerHTML = '已读';
+				}
+				else
+				{
+					return;
+				}
+			}
+            // 设置聊天框背景色
+            function setDialogBgc(target,color) {
+                if(color){
+                    if (target === '0'){
+                        var dialogList  = document.getElementsByClassName('dialog_me');
+                    }else if(target === '1') {
+                        var dialogList  = document.getElementsByClassName('dialog_others');
+                    }else {
+                        alert('请指定目标！');
+                    }
+                    for (var i=0;i<dialogList.length;i++){
+                        dialogList[i].style.background = color;
+                    }
+                } else {
+                    alert('请指定颜色！');
+                }
+
+            }
+			function sendSound(){
+				var content_container = document.getElementById('content');
+				var newDiv = document.createElement('div');
+				var newDialog = document.createElement('div');
+				var stateSpan = document.createElement('span');
+				stateSpan.setAttribute('class','stateSpan');
+				var url = './1.jpg';
+				var picContainer = document.createElement('img');
+				picContainer.setAttribute('src',url);
+				picContainer.setAttribute('class','avatarPic');
+				var soundIcon = document.createElement('i');								
+				soundIcon.className = 'iconfont icon-sound_right';
+				var secondSpan = document.createElement('span');
+				secondSpan.innerHTML = '5”';
+				newDialog.appendChild(soundIcon);
+				newDialog.appendChild(secondSpan);
+				newDiv.appendChild(picContainer);
+				newDiv.appendChild(newDialog);
+				newDiv.appendChild(stateSpan);
+				newDiv.setAttribute('class','dialogContainer');
+				newDialog.className = 'msgContent right dialog_me';
+				content_container.appendChild(newDiv);
+				var div = document.createElement('div');
+				div.style = 'clear:both';
+				content_container.appendChild(div);
+				div.scrollIntoView();	
+			}
+			
+			//发送语音消息
+			function appendVoiceMsg(messageTarget,voiceDuration,voicePath,avatarPath){
+				//初始化容器
+				var content_container = document.getElementById('content');
+				var newDiv = document.createElement('div');
+				var newDialog = document.createElement('div');
+				newDialog.setAttribute('class','voiceDiv');
+				//头像信息
+				var avatarContainer = document.createElement('img');
+				avatarContainer.setAttribute('src',avatarPath);
+				avatarContainer.setAttribute('class','avatarPic');
+				//语音信息
+				var soundIcon = document.createElement('i');
+				if(messageTarget === 0)
+				{
+					soundIcon.className = 'iconfont icon-sound_right';
+				}
+				else
+				{
+					soundIcon.className = 'iconfont icon-sound_left';
+				}
+				soundIcon.setAttribute('voicePath',voicePath);//LYS
+				
+				var soundLength = document.createElement('span');
+				soundLength.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				var count = voiceDuration/2;
+				for(var index=0;index<count;index++)
+				{
+					soundLength.innerHTML += '&nbsp;';
+				}
+								
+				var secondSpan = document.createElement('span');
+				secondSpan.innerHTML = voiceDuration+'"';
+				// 读取状态容器
+				var stateSpan;
+				if(messageTarget === 0)
+				{
+					stateSpan = document.createElement('span');
+					stateSpan.setAttribute('class','stateSpan');
+					stateSpan.innerHTML = '未读'
+				}
+				if(messageTarget === 0)
+				{
+					newDialog.appendChild(soundLength);
+					newDialog.appendChild(soundIcon);
+					newDialog.appendChild(secondSpan);
+				}
+				else
+				{
+					newDialog.appendChild(secondSpan);
+					newDialog.appendChild(soundIcon);
+					newDialog.appendChild(soundLength);
+				}
+
+				newDiv.appendChild(avatarContainer);
+				newDiv.appendChild(newDialog);
+				if(messageTarget === 0)
+				{
+					newDiv.appendChild(stateSpan);
+				}
+				
+				newDiv.setAttribute('class','dialogContainer');
+				if(messageTarget === 0)
+				{
+					newDialog.className = 'msgContent right dialog_me';
+				}
+				else
+				{
+					newDialog.className = 'msgContent left dialog_others';
+					avatarContainer.className = 'avatarPic left';
+					/*stateSpan.className = 'stateSpan left';*/
+				}
+				content_container.appendChild(newDiv);
+				var div = document.createElement('div');
+				div.style = 'clear:both';
+				content_container.appendChild(div);
+				div.scrollIntoView();
+			}
+			
+			//前置发送语音消息
+			function prependVoiceMsg(messageTarget,voiceDuration,voicePath,avatarPath){
+				//初始化容器
+				var content_container = document.getElementById('content');
+				var newDiv = document.createElement('div');
+				var newDialog = document.createElement('div');
+				newDialog.setAttribute('class','voiceDiv');
+				//头像信息
+				var avatarContainer = document.createElement('img');
+				avatarContainer.setAttribute('src',avatarPath);
+				avatarContainer.setAttribute('class','avatarPic');
+				//语音信息
+				var soundIcon = document.createElement('i');
+				if(messageTarget === 0)
+				{
+					soundIcon.className = 'iconfont icon-sound_right';
+				}
+				else
+				{
+					soundIcon.className = 'iconfont icon-sound_left';
+				}
+				soundIcon.setAttribute('voicePath',voicePath);//LYS
+				
+				var soundLength = document.createElement('span');
+				soundLength.innerHTML = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				var count = voiceDuration/2;
+				for(var index=0;index<count;index++)
+				{
+					soundLength.innerHTML += '&nbsp;';
+				}
+								
+				var secondSpan = document.createElement('span');
+				secondSpan.innerHTML = voiceDuration+'"';
+				// 读取状态容器
+				var stateSpan;
+				if(messageTarget === 0)
+				{
+					stateSpan = document.createElement('span');
+					stateSpan.setAttribute('class','stateSpan');
+					stateSpan.innerHTML = '未读'
+				}
+				if(messageTarget === 0)
+				{
+					newDialog.appendChild(soundLength);
+					newDialog.appendChild(soundIcon);
+					newDialog.appendChild(secondSpan);
+				}
+				else
+				{
+					newDialog.appendChild(secondSpan);
+					newDialog.appendChild(soundIcon);
+					newDialog.appendChild(soundLength);
+				}
+
+				newDiv.appendChild(avatarContainer);
+				newDiv.appendChild(newDialog);
+				if(messageTarget === 0)
+				{
+					newDiv.appendChild(stateSpan);
+				}
+				
+				newDiv.setAttribute('class','dialogContainer');
+				if(messageTarget === 0)
+				{
+					newDialog.className = 'msgContent right dialog_me';
+				}
+				else
+				{
+					newDialog.className = 'msgContent left dialog_others';
+					avatarContainer.className = 'avatarPic left';
+					/*stateSpan.className = 'stateSpan left';*/
+				}
+				content_container.insertBefore(newDiv,content_container.childNodes[0]);
+				var div = document.createElement('div');
+				div.style = 'clear:both';
+				content_container.insertBefore(div,content_container.childNodes[0]);
+				div.scrollIntoView();
+			}
+			
+			function stickSeeMore(){
+				var content_container = document.getElementById('content');
+				var newDiv = document.createElement('div');
+			}
+			
+			function test(data) {
+				var obj = JSON.parse(data);
+				console.log(obj);
+				console.log(obj.name);
+			}
+			
+        }
+    </script>
+
+</head>
+
+<body>
+<div id="main" class="main">
+    <div class="chat_titile" @click="toggleWindow" id="chat_titile">
+        <span class="chat_title">
+            chatTitile
+        </span>
+    </div>
+    <div id="content" class="content">
+    </div>
+    <textarea id="msg_input" class="msgInput"></textarea>
+    <button id="sendbtn" class="sendbtn">mysend</button>
+	<button id="showMessageTime" class="msgbtn">time</button>
+    <button id="othersMessage" class="othersbtn" @click="othersMessage">
+        others
+    </button>
+    <button id="test" class="timeBtn">test</button>
+    <button id="setNotice0" class="timeBtn">notice0</button>
+    <button id="setNotice1" class="timeBtn">notice1</button>
+    <button id="setNotice2" class="timeBtn">notice2</button>
+    <button id="sendFile" class="timeBtn">File</button>
+    <button id="sendFile1" class="timeBtn">File1</button>
+    <button id="setHistory" class="timeBtn">his</button>
+    <button id="clearHistory" class="timeBtn">cle</button>
+    <button id="mesState" class="timeBtn">state</button>
+	<button id="sound" class="soundbtn">sound</button>
+</div>
+    <div style="margin-top: 10px;text-align: center;">
+        <input type="text" id="dialogTarget" placeholder="target" style="width: 40px;">
+        <input type="text" id="dialogBgc" placeholder="color" style="width: 40px;">
+        <button id="setColor">color</button>
+    </div>
+</body>
+</html>
