@@ -134,8 +134,24 @@
             border-radius: 5px;
             text-align: left;
         }
+        /*.msgContent.collapse {
+            max-height: 300px;
+            overflow-y: hidden;
+        }*/
         .msgContent span.textMesContainer {
             display:block;
+        }
+        .exp_btn{
+            display: inline-block;
+            width: 20px;
+            height:20px;
+            line-height: 18px;
+            text-align: center;
+            border-radius: 10px;
+            background-color: #ccc;
+            color: #fff;
+            cursor: pointer;
+
         }
         .content .right{
             float: right;
@@ -693,22 +709,47 @@
                 var url = './1.jpg';
                 var picContainer = document.createElement('img');
                 var stateSpan = document.createElement('span');
+                /*var container_h = content_container.offsetHeight //获取当前窗口高度
+                alert(container_h)*/
                 stateSpan.setAttribute('class','stateSpan');
                 picContainer.setAttribute('src',url);
                 picContainer.setAttribute('class','avatarPic');
-                newDialog.innerHTML = input.value;
+                if(input.value.length > 200){
+                    let valInput = input.value
+                    let valCut = valInput.substr(0,200)
+                    newDialog.innerHTML = valCut + '...'
+                    let exp_btn = document.createElement('span')
+                    exp_btn.innerHTML = '+'
+                    addClass(exp_btn,'exp_btn')
+                    newDialog.appendChild(exp_btn)
+                    exp_btn.addEventListener("click", function () {
+                        newDialog.innerHTML = valInput
+                        /*let exp_btn = document.createElement('span')
+                        coll_btn.innerHTML = '-'
+                        addClass(coll_btn,'exp_btn')
+                        newDialog.appendChild(coll_btn)*/
+                    })
+                } else {
+                    newDialog.innerHTML = input.value
+                }
+                // newDialog.innerHTML = input.value;
                 newDiv.appendChild(picContainer);
                 newDiv.appendChild(newDialog);
                 newDiv.appendChild(stateSpan);
                 newDiv.setAttribute('class','dialogContainer');
                 newDialog.className = 'msgContent right';
+                // addClass(newDialog, 'collapse')
+                // var msg_h = newDialog.clientHeight
                 content_container.appendChild(newDiv);
                 var div = document.createElement('div');
                 div.style = 'clear:both';
                 content_container.appendChild(div);
-
                 input.value = '';
                 newDiv.scrollIntoView();//将元素滚动到可见位置
+                /*alert(msg_h)
+                if(msg_h > 200 && msg_h > container_h*0.8){
+                    addClass(newDialog,'collapseDialog')
+                }*/
             }
             // 别人发送一个消息
             function othersMessage() {
