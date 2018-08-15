@@ -141,7 +141,16 @@
         .msgContent span.textMesContainer {
             display:block;
         }
-        .exp_btn{
+        .exp_btn {
+            display: inline-block;
+            margin-left: 2px;
+            color:#fff;
+            cursor:pointer;
+            height:20px;
+            line-height: 20px;
+        }
+        .exp_btn .icon{
+            margin-right: 6px;
             display: inline-block;
             width: 20px;
             height:20px;
@@ -382,17 +391,17 @@
         }
         @keyframes opacity2{
             0%{opacity:0}
-            50%{opacity:.6;}
+            50%{opacity:.8;}
             100%{opacity:1;}
         }
         @-webkit-keyframes opacity2{
             0%{opacity:0}
-            50%{opacity:.6;}
+            50%{opacity:.8;}
             100%{opacity:1;}
         }
         @-moz-keyframes opacity2{
             0%{opacity:0}
-            50%{opacity:.6;}
+            50%{opacity:.8;}
             100%{opacity:1;}
         }
     </style>
@@ -501,9 +510,9 @@
 			
 				e = e || document.event;
 				console.log('------------')
-				<!-- console.log('文档1***'+getDocumentTop()); -->
+				/*<!-- console.log('文档1***'+getDocumentTop()); -->
 				<!-- console.log('可视窗口1***'+getWindowHeight()); -->
-				<!-- console.log('滚动条1***'+getScrollHeight()); -->
+				<!-- console.log('滚动条1***'+getScrollHeight()); -->*/
 				console.log('可视范围2***'+getScrollTop());
 				console.log('窗口2***'+getClientHeight());
 				console.log('文档2***'+getScrollHeight());
@@ -517,7 +526,9 @@
 			}
 			
 			content.onmousewheel = scrollFunc;
-			
+			document.getElementById('clear').addEventListener('click', function (ev) {
+			    document.getElementById('content').innerHTML = ''
+            })
             var input = document.getElementById('msg_input');//查找缓存
             /*var imgMesContainer = document.getElementsByClassName('imgMesContainer')*/
             // 模拟自己发消息
@@ -540,6 +551,30 @@
             document.getElementById('chat_titile').addEventListener('dblclick',function (ev) {
                 toggleWindow();
             })
+            // 模拟点击切换文字高度
+            document.getElementById('content').addEventListener('dblclick',function(ev) {
+                var targetContainer = ev.target
+                if(hasClass(targetContainer, 'exp_btn') && !hasClass(targetContainer,'flag')) {
+                    addClass(targetContainer, 'flag')
+                    var inputStore = targetContainer.getElementsByTagName('p')[0]
+                    // inputStore[0].innerHTM
+                    // targetContainer.parentNode.innerHTML = inputStore[0].innerText
+                    targetContainer.parentNode.firstChild.nodeValue = inputStore.innerHTML
+                    console.log(targetContainer.parentNode.innerText)
+                    // targetContainer.getElementsByClassName('icon')[0].innerHTML = '-'
+                    // targetContainer.getElementsByClassName('action')[0].innerHTML = '点击收起'
+                    targetContainer.innerHTML = '点击收起'
+                    targetContainer.appendChild(inputStore)
+                    // targetContainer.parentNode.innerHTML = inputStore + '<span class="icon">+</span>' + '点击展开'
+                    // console.log(ev.target.parentNode.innerHTML)
+                } else if(hasClass(targetContainer, 'exp_btn') && hasClass(targetContainer, 'flag')){
+                    removeClass(targetContainer, 'flag')
+                    var valTxt = targetContainer.parentNode.firstChild.nodeValue
+                    // alert(valTxt)
+                    targetContainer.parentNode.firstChild.nodeValue = valTxt.substr(0,200) + '...'
+                }
+            })
+
             // 模拟发送图片加文字消息
             document.getElementById('test').addEventListener('click',function (ev) {
                 var input = '<img src="users\\2634\\ChatRecvFile\\Image\\C2C\\02fdc2b0df19b9f882ad0fba4636a918.png">'
@@ -715,20 +750,25 @@
                 picContainer.setAttribute('src',url);
                 picContainer.setAttribute('class','avatarPic');
                 if(input.value.length > 200){
-                    let valInput = input.value
-                    let valCut = valInput.substr(0,200)
+                    var valInput = input.value
+                    var valCut = valInput.substr(0,200)
                     newDialog.innerHTML = valCut + '...'
-                    let exp_btn = document.createElement('span')
-                    exp_btn.innerHTML = '+'
+                    var exp_btn = document.createElement('span')
+                    // exp_btn.innerHTML = '<span class="icon">+</span>' + '<span class="action">点击展开</span>'
+                    exp_btn.innerHTML = '点击展开'
+                    var inputStorage = document.createElement('p')
+                    inputStorage.innerHTML = valInput
+                    inputStorage.style.display = 'none'
+                    exp_btn.appendChild(inputStorage)
                     addClass(exp_btn,'exp_btn')
                     newDialog.appendChild(exp_btn)
-                    exp_btn.addEventListener("click", function () {
+                    /*exp_btn.addEventListener("click", function () {
                         newDialog.innerHTML = valInput
-                        /*let exp_btn = document.createElement('span')
+                        /!*let exp_btn = document.createElement('span')
                         coll_btn.innerHTML = '-'
                         addClass(coll_btn,'exp_btn')
-                        newDialog.appendChild(coll_btn)*/
-                    })
+                        newDialog.appendChild(coll_btn)*!/
+                    })*/
                 } else {
                     newDialog.innerHTML = input.value
                 }
@@ -767,7 +807,30 @@
                 var picContainer = document.createElement('img');
                 picContainer.setAttribute('src',url);
                 picContainer.setAttribute('class','avatarPic othersAvatar');
-                newDialog.innerHTML = input.value;
+                // newDialog.innerHTML = input.value;
+                if(input.value.length > 200){
+                    var valInput = input.value
+                    var valCut = valInput.substr(0,200)
+                    newDialog.innerHTML = valCut + '...'
+                    var exp_btn = document.createElement('span')
+                    // exp_btn.innerHTML = '<span class="icon">+</span>' + '<span class="action">点击展开</span>'
+                    exp_btn.innerHTML = '点击展开'
+                    var inputStorage = document.createElement('p')
+                    inputStorage.innerHTML = valInput
+                    inputStorage.style.display = 'none'
+                    exp_btn.appendChild(inputStorage)
+                    addClass(exp_btn,'exp_btn')
+                    newDialog.appendChild(exp_btn)
+                    /*exp_btn.addEventListener("click", function () {
+                        newDialog.innerHTML = valInput
+                        /!*let exp_btn = document.createElement('span')
+                        coll_btn.innerHTML = '-'
+                        addClass(coll_btn,'exp_btn')
+                        newDialog.appendChild(coll_btn)*!/
+                    })*/
+                } else {
+                    newDialog.innerHTML = input.value
+                }
                 newDiv.appendChild(picContainer);
                 newDiv.appendChild(newDialog);
                 newDiv.appendChild(stateSpan);
@@ -1533,5 +1596,8 @@
         <input type="text" id="dialogBgc" placeholder="color" style="width: 40px;">
         <button id="setColor">color</button>
     </div>
+    <button id="clear">
+        清空
+    </button>
 </body>
 </html>
