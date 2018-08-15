@@ -390,19 +390,19 @@
             -moz-animation: 2s opacity2;
         }
         @keyframes opacity2{
-            0%{opacity:0}
-            50%{opacity:.8;}
-            100%{opacity:1;}
+            0%{opacity:0;transform: translate3d(0,-20%,0)}
+            50%{opacity:.8;transform: translate3d(0,0,0)}
+            100%{opacity:1;transform: translate3d(0,0,0)}
         }
         @-webkit-keyframes opacity2{
-            0%{opacity:0}
-            50%{opacity:.8;}
-            100%{opacity:1;}
+            0%{opacity:0;transform: translate3d(0,-20%,0)}
+            50%{opacity:.8;transform: translate3d(0,0,0)}
+            100%{opacity:1;transform: translate3d(0,0,0)}
         }
         @-moz-keyframes opacity2{
-            0%{opacity:0}
-            50%{opacity:.8;}
-            100%{opacity:1;}
+            0%{opacity:0;transform: translate3d(0,-20%,0)}
+            50%{opacity:.8;transform: translate3d(0,0,0)}
+            100%{opacity:1;transform: translate3d(0,0,0)}
         }
     </style>
     <script type="text/javascript">
@@ -526,9 +526,6 @@
 			}
 			
 			content.onmousewheel = scrollFunc;
-			document.getElementById('clear').addEventListener('click', function (ev) {
-			    document.getElementById('content').innerHTML = ''
-            })
             var input = document.getElementById('msg_input');//查找缓存
             /*var imgMesContainer = document.getElementsByClassName('imgMesContainer')*/
             // 模拟自己发消息
@@ -552,7 +549,7 @@
                 toggleWindow();
             })
             // 模拟点击切换文字高度
-            document.getElementById('content').addEventListener('dblclick',function(ev) {
+            document.getElementById('content').addEventListener('click',function(ev) {
                 var targetContainer = ev.target
                 if(hasClass(targetContainer, 'exp_btn') && !hasClass(targetContainer,'flag')) {
                     addClass(targetContainer, 'flag')
@@ -1596,8 +1593,5 @@
         <input type="text" id="dialogBgc" placeholder="color" style="width: 40px;">
         <button id="setColor">color</button>
     </div>
-    <button id="clear">
-        清空
-    </button>
 </body>
 </html>
